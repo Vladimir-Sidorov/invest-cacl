@@ -57,9 +57,8 @@ const getInputValue = ({ event, wrapRangeRef, step, min, max}: {
 export const InputRange: FC<InputRangeProps> = ({
     min, max, value, step
 }) => {
-    // const integerAccept = /\d+/g;
-    // const parseInteger = (string: any) => (string.match(integerAccept) || []).join('');
-
+    const integerAccept = /\d+/g;
+    const parseInteger = (string: any) => (string.match(integerAccept) || []).join('');
 
     const maxValue = Math.max(Number(min), Number(value)).toString();
     const [inputValue, setInputValue] = useState<string>(maxValue);
@@ -72,16 +71,16 @@ export const InputRange: FC<InputRangeProps> = ({
     const wrapRangeRef = useRef<HTMLDivElement>(null);
 
     const handleChangeValue = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        const changeValue = event.target.value;
-        const parseValue = parseInt(changeValue);
-        const currInputValue = (parseValue || min).toString();
+        const changeValue = event.target.value;        
+        
+        const currInputValue = (parseInteger(changeValue) || min).toString();
         setInputValue(currInputValue);
     }, [inputValue]);
 
     const handleBlur = useCallback((event: ChangeEvent<HTMLInputElement>) => {        
         const changeValue = event.target.value.match(/\d/g)?.join('');        
 
-        const currentInputValue = Math.round(Number(changeValue) / Number(step)) * Number(step);
+        const currentInputValue = Math.round(parseInteger(changeValue) / Number(step)) * Number(step);
         const qy = Math.max(Number(min), Number(currentInputValue));
         const newInputValue = Math.min(qy, Number(max)).toString();
         const newPercent = getPercent(newInputValue, Number(max));
