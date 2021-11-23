@@ -9,8 +9,8 @@ import {
 } from "react";
 
 import { getPercentageOfNumbers } from "../../helpers";
-import { PERCENT_VALUE } from "../constants";
-import { Circle, InputRangeWrapper, NumberInput, WrapRange, Range } from "./styled";
+import { PERCENT_VALUE } from "../../constants";
+import { Circle, InputRangeWrapper, WrapRange, Range, NativeInputRange } from "./styled";
 
 
 export interface InputRangeProps {
@@ -57,6 +57,9 @@ const getInputValue = ({ event, wrapRangeRef, step, min, max}: {
 export const InputRange: FC<InputRangeProps> = ({
     min, max, value, step
 }) => {
+    const integerAccept = /\d+/g;
+    const parseInteger = (string: any) => (string.match(integerAccept) || []).join('');
+
     const maxValue = Math.max(Number(min), Number(value)).toString();
     const [inputValue, setInputValue] = useState<string>(maxValue);
 
@@ -66,20 +69,18 @@ export const InputRange: FC<InputRangeProps> = ({
     const [isMoveRange, setIsMoveRange] = useState<boolean>(false);
 
     const wrapRangeRef = useRef<HTMLDivElement>(null);
-    const rangeRef = useRef<HTMLDivElement>(null);
-    const circleRef = useRef<HTMLDivElement>(null);
 
     const handleChangeValue = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        const changeValue = event.target.value;
-        const parseValue = parseInt(changeValue);
-        const currInputValue = (parseValue || min).toString();
+        const changeValue = event.target.value;        
+        
+        const currInputValue = (parseInteger(changeValue) || min).toString();
         setInputValue(currInputValue);
     }, [inputValue]);
 
-    const handleBlur = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        const changeValue = event.target.value;
+    const handleBlur = useCallback((event: ChangeEvent<HTMLInputElement>) => {        
+        const changeValue = event.target.value.match(/\d/g)?.join('');        
 
-        const currentInputValue = Math.round(Number(changeValue) / Number(step)) * Number(step);
+        const currentInputValue = Math.round(parseInteger(changeValue) / Number(step)) * Number(step);
         const qy = Math.max(Number(min), Number(currentInputValue));
         const newInputValue = Math.min(qy, Number(max)).toString();
         const newPercent = getPercent(newInputValue, Number(max));
@@ -136,26 +137,24 @@ export const InputRange: FC<InputRangeProps> = ({
 
     return (
         <InputRangeWrapper>
-            <NumberInput
+            <NativeInputRange
                 type="text"
-                value={inputValue}
-                max={max}
+                value={Number(inputValue).toLocaleString()}
                 onChange={handleChangeValue}
                 onBlur={handleBlur}
             />
+
             <WrapRange
                 ref={wrapRangeRef}
                 onClick={handleClickRange}
             >
                 <Range
-                    ref={rangeRef}
                     style={{
                         width: stylePercentValue,
                         transition: transitionValue
                     }}
                 />
                 <Circle
-                    ref={circleRef}
                     style={{
                         left: stylePercentValue,
                         transition: transitionValue
