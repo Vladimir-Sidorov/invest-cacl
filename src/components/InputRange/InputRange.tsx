@@ -11,7 +11,6 @@ import {
 import { getPercentageOfNumbers } from "../../helpers";
 import { PERCENT_VALUE } from "../../constants";
 import { Circle, InputRangeWrapper, WrapRange, Range, NativeInputRange } from "./styled";
-import { Rifm } from "rifm";
 
 
 export interface InputRangeProps {
@@ -58,7 +57,8 @@ const getInputValue = ({ event, wrapRangeRef, step, min, max}: {
 export const InputRange: FC<InputRangeProps> = ({
     min, max, value, step
 }) => {
-    const [formatted, setFormatted] = useState('1000');
+    // const integerAccept = /\d+/g;
+    // const parseInteger = (string: any) => (string.match(integerAccept) || []).join('');
 
 
     const maxValue = Math.max(Number(min), Number(value)).toString();
@@ -76,12 +76,10 @@ export const InputRange: FC<InputRangeProps> = ({
         const parseValue = parseInt(changeValue);
         const currInputValue = (parseValue || min).toString();
         setInputValue(currInputValue);
-    }, [inputValue, formatted]);
+    }, [inputValue]);
 
     const handleBlur = useCallback((event: ChangeEvent<HTMLInputElement>) => {        
-        const changeValue = event.target.value.match(/\d/g)?.join('');
-        console.log(changeValue, 'changeValue 113311');
-        
+        const changeValue = event.target.value.match(/\d/g)?.join('');        
 
         const currentInputValue = Math.round(Number(changeValue) / Number(step)) * Number(step);
         const qy = Math.max(Number(min), Number(currentInputValue));
@@ -89,9 +87,8 @@ export const InputRange: FC<InputRangeProps> = ({
         const newPercent = getPercent(newInputValue, Number(max));
 
         setInputValue(newInputValue);
-        setFormatted(newInputValue);
         setPercent(newPercent);
-    }, [inputValue, formatted]);
+    }, [inputValue]);
 
     const handleClickRange = useCallback((event: ReactMouseEvent<HTMLDivElement>) => {
         const newInputValue = getInputValue({
@@ -105,9 +102,8 @@ export const InputRange: FC<InputRangeProps> = ({
         const newPercent = getPercent(newInputValue, Number(max));
 
         setInputValue(newInputValue);
-        setFormatted(newInputValue);
         setPercent(newPercent);
-    }, [inputValue, formatted])
+    }, [inputValue])
 
     const handleMoveCircle = useCallback(() => {
         setIsMoveRange(true);
@@ -123,7 +119,6 @@ export const InputRange: FC<InputRangeProps> = ({
             const newPercent = getPercent(newInputValue, Number(max));
 
             setInputValue(newInputValue);
-            setFormatted(newInputValue);
             setPercent(newPercent);
 
             document.onmouseup = () => {
@@ -136,45 +131,19 @@ export const InputRange: FC<InputRangeProps> = ({
             moveAt(event);
         };
 
-    }, [inputValue, formatted]);
+    }, [inputValue]);
 
     const transitionValue = isMoveRange ? 'none' : '0.85s ease-in-out';
     const stylePercentValue = `${percent}%`;
 
-    /////index.ts
-    const integerAccept = /\d+/g;
-    const parseInteger = (string: any) => (string.match(integerAccept) || []).join('');
-
-    const formatInteger = (string: any) => {
-        const parsed = parseInteger(string);
-        const number = Number.parseInt(parsed, 10);
-        if (Number.isNaN(number)) {
-          return '';
-        }
-        return number.toLocaleString();
-    };
-
-      const renderInput = ({ value, onChange }: any) => (
-        <NativeInputRange
-          type="text"
-          value={value}
-          onChange={onChange}
-          onBlur={handleBlur}
-        />
-      );
-    /////index.ts
-
     return (
         <InputRangeWrapper>
-            <Rifm
-                accept={/\d/g}
-                mask={7 <= formatted.length}
-                format={formatInteger}
-                value={formatted}
-                onChange={setFormatted}
-            >
-                {renderInput}
-            </Rifm>
+            <NativeInputRange
+                type="text"
+                value={Number(inputValue).toLocaleString()}
+                onChange={handleChangeValue}
+                onBlur={handleBlur}
+            />
 
             <WrapRange
                 ref={wrapRangeRef}

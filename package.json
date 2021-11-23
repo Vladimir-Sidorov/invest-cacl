@@ -15,8 +15,6 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-input-mask": "^3.0.0-alpha.2",
-    "react-number-format": "^4.8.0",
-    "rifm": "^0.12.0",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
@@ -25,7 +23,6 @@
     "@types/node": "^16.7.1",
     "@types/react": "^17.0.31",
     "@types/react-dom": "^17.0.10",
-    "@types/react-input-mask": "^3.0.1",
     "@types/styled-components": "^5.1.15",
     "@types/webpack": "^5.28.0",
     "@typescript-eslint/eslint-plugin": "^4.29.2",

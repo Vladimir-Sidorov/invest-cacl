@@ -1,55 +1,22 @@
 import styled from "styled-components";
-import InputMask from 'react-input-mask';
 
-import { Input, InputRange, LabelInput } from "../../components"
-import { Rifm } from "rifm";
-import { useState } from "react";
+import { LabelInput } from "../../components"
 
-const Tt = ({...rest}) => {
-    return (
-        <>
-            <input {...rest} />
-        </>
-    )
-}
 
 export const InvestCalc = () => {
-    const [formatted, setFormatted] = useState('18-08-1978');
-
-    const parseDigits = (string: any) => (string.match(/\d+/g) || []).join('');
-
-    const formatDate = (string: any) => {
-        const digits = parseDigits(string);
-        const chars = digits.split('');
-        return chars
-          .reduce(
-            (r: any, v: any, index: any) => (index === 2 || index === 4 ? `${r}-${v}` : `${r}${v}`),
-            ''
-          )
-          .substr(0, 10);
-      };
-
-      const renderInput = ({ value, onChange }: any) => (
-        <Input
-          type="tel"
-          placeholder="dd-mm-yyyy"
-          value={value}
-          onChange={onChange}
-        />
-      );
+    // const formatDate = (string: any) => {
+    //     const digits = parseDigits(string);
+    //     const chars = digits.split('');
+    //     return chars
+    //       .reduce(
+    //         (r: any, v: any, index: any) => (index === 2 || index === 4 ? `${r}-${v}` : `${r}${v}`),
+    //         ''
+    //       )
+    //       .substr(0, 10);
+    //   };
 
     return (
         <WrapInvestCalc>
-            <Rifm
-                accept={/\d/g}
-                mask={10 <= formatted.length}
-                format={formatDate}
-                value={formatted}
-                onChange={setFormatted}
-            >
-                {renderInput}
-            </Rifm>
-
             <LabelInput
                 title="Стартовая сумма"
                 min='0'
