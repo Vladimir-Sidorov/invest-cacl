@@ -1,31 +1,15 @@
 import styled from "styled-components";
 
-export const InputRangeWrapper = styled.span`
-    display: inline-flex;
-    width: 550px;
-    position: relative;
-    margin-left: 200px;
-    cursor: pointer;
+import { NativeInput } from '../Input/styled';
+
+export const NativeInputRange = styled(NativeInput)`
+    margin-bottom: 0;
 `;
 
-export const NumberInput = styled.input`
-    outline: 1px solid #dedede;
-    border: 0px;
-    width: 100%;
-    padding: 14px 5px;
-    font-weight: 500;
-    border-radius: 3px;
-    transition: outline-color .2s ease-out;
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-        margin: 0;
-    }
-
-    &:focus {
-        transition: outline-color .2s ease-out;
-        outline-color: #a19b9b;
-    }
+export const InputRangeWrapper = styled.div`
+    display: flex;
+    position: relative;
+    margin-bottom: 24px;
 `;
 
 export const WrapRange = styled.div`
@@ -33,6 +17,7 @@ export const WrapRange = styled.div`
     width: 100%;
     height: 7px;
     bottom: -2px;
+    cursor: pointer;
 `;
 
 export const Range = styled.div`
