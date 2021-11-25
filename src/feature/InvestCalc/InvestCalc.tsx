@@ -4,17 +4,6 @@ import { LabelInput } from "../../components"
 
 
 export const InvestCalc = () => {
-    // const formatDate = (string: any) => {
-    //     const digits = parseDigits(string);
-    //     const chars = digits.split('');
-    //     return chars
-    //       .reduce(
-    //         (r: any, v: any, index: any) => (index === 2 || index === 4 ? `${r}-${v}` : `${r}${v}`),
-    //         ''
-    //       )
-    //       .substr(0, 10);
-    //   };
-
     return (
         <WrapInvestCalc>
             <LabelInput
@@ -34,7 +23,7 @@ export const InvestCalc = () => {
             />
 
             <LabelInput
-                title="Среднегодовая доходность"
+                title="Среднегодовая доходность в %"
                 min='0'
                 max='100'
                 value='1'
@@ -42,7 +31,7 @@ export const InvestCalc = () => {
             />
 
             <LabelInput
-                title="Срок инвестирования"
+                title="Срок инвестирования в годах"
                 min='0'
                 max='100'
                 value='1'

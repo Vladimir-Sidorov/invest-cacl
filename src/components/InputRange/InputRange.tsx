@@ -8,8 +8,7 @@ import {
     useState
 } from "react";
 
-import { getPercentageOfNumbers } from "../../helpers";
-import { PERCENT_VALUE } from "../../constants";
+import { getPercentageOfNumbers, getPercent, getCurrentValue } from "../../utils";
 import { Circle, InputRangeWrapper, WrapRange, Range, NativeInputRange } from "./styled";
 
 
@@ -22,22 +21,12 @@ export interface InputRangeProps {
 
 // https://www.npmjs.com/package/recharts  диаграммы
 
-const getCurrentValue = (currentValue: number, min: number, max: number) => {
-    let newCurrentValue = currentValue;
-    if(currentValue < Number(min)) {
-        newCurrentValue = min;
-    } else if (currentValue > Number(max)) {
-        newCurrentValue = max;
-    }
+const integerAccept = /\d+/g;
+const parseInteger = (inputValue: string) =>
+    (inputValue.match(integerAccept) || []).join('');
 
-    return newCurrentValue.toString();
-}
-
-const getPercent = (newInputValue: string, max: number) => {
-    const indentPercent = getPercentageOfNumbers(Number(newInputValue), max);
-    const indentPercentMax = Math.min(indentPercent, 100)
-    return getCurrentValue(indentPercentMax, Number(PERCENT_VALUE.MIN), Number(PERCENT_VALUE.MAX)); 
-}
+const getRoundValue = (changeValue: string, step: string) =>
+    Math.round(Number(parseInteger(changeValue)) / Number(step)) * Number(step);
 
 const getInputValue = ({ event, wrapRangeRef, step, min, max}: {
     event: MouseEvent | ReactMouseEvent<HTMLDivElement>;
@@ -48,17 +37,18 @@ const getInputValue = ({ event, wrapRangeRef, step, min, max}: {
 }) => {
     const { width, left } = wrapRangeRef.current!.getBoundingClientRect();
     const circlePosition = event.pageX - left;
+
     const stepInPercentage = getPercentageOfNumbers(Number(step), Number(max));
     const indentPercentPageX = getPercentageOfNumbers(circlePosition, width);
     const currentInputValue = Math.round(indentPercentPageX / stepInPercentage) * step;
+
     return getCurrentValue(currentInputValue, min, max);
 }
 
 export const InputRange: FC<InputRangeProps> = ({
     min, max, value, step
 }) => {
-    const integerAccept = /\d+/g;
-    const parseInteger = (string: any) => (string.match(integerAccept) || []).join('');
+    const wrapRangeRef = useRef<HTMLDivElement>(null);
 
     const maxValue = Math.max(Number(min), Number(value)).toString();
     const [inputValue, setInputValue] = useState<string>(maxValue);
@@ -68,21 +58,18 @@ export const InputRange: FC<InputRangeProps> = ({
 
     const [isMoveRange, setIsMoveRange] = useState<boolean>(false);
 
-    const wrapRangeRef = useRef<HTMLDivElement>(null);
-
     const handleChangeValue = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         const changeValue = event.target.value;        
         
-        const currInputValue = (parseInteger(changeValue) || min).toString();
+        const currInputValue = (parseInteger(changeValue) || min);
         setInputValue(currInputValue);
     }, [inputValue]);
 
-    const handleBlur = useCallback((event: ChangeEvent<HTMLInputElement>) => {        
-        const changeValue = event.target.value.match(/\d/g)?.join('');        
+    const handleBlur = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;        
 
-        const currentInputValue = Math.round(parseInteger(changeValue) / Number(step)) * Number(step);
-        const qy = Math.max(Number(min), Number(currentInputValue));
-        const newInputValue = Math.min(qy, Number(max)).toString();
+        const currentRoundValue = getRoundValue(newValue, step);
+        const newInputValue = Math.min(currentRoundValue, Number(max)).toString();
         const newPercent = getPercent(newInputValue, Number(max));
 
         setInputValue(newInputValue);
